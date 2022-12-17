@@ -1,0 +1,13 @@
+---
+- hosts: fedora
+  tasks:
+  - name: Update Fedora servers packages
+    dnf:
+      name: "*"
+      state: latest
+      update_cache: yes
+      update_only: yes
+    register: dnf_update_status
+  - name: Remove packages not needed anymore
+    yum:
+      autoremove: yes
