@@ -1,0 +1,40 @@
+---
+- hosts: 10.0.1.156
+  tasks:
+    - name: Set Hostname
+      command: "/usr/bin/hostnamectl --static --pretty --transient set-hostname fedoraserver.maartenzuidland.nl"
+      become: true
+    
+    - name: Add Docker repository
+      ansible.builtin.yum_repository:
+        name: docker-ce
+        description: Docker Community Edition Repo
+        baseurl: https://download.docker.com/linux/fedora/docker-ce.repo
+        sslverify: false
+        gpgcheck: no
+
+    - name: Enable the RPM Fusion repository
+      dnf:
+        name: "{{item}}"
+        state: present
+      with_items:
+      - 'https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-37.noarch.rpm'
+      - 'https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-37.noarch.rpm'
+    
+    - name: Install required packages
+      dnf:
+        name: "{{item}}"
+        state: present
+      with_items:
+      - docker-ce 
+      - docker-ce-cli 
+      - containerd.io 
+      - docker-compose-plugin
+      - btop
+      - git
+      - hwinfo
+      - intel-media-driver
+      - mutt
+      - snapper
+      - python3-dnf-plugin-snapper
+      - python3-dnf-plugin-tracer
